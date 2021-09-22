@@ -1,0 +1,21 @@
+service sonarr stop
+portsnap fetch extract
+nano /tmp/mono-patch-5.20.1.34
+Copy everything from https://bz-attachments.freebsd.org/attachment.cgi?id=205999 into that file, save and close
+cd /usr/ports/lang/mono
+patch -E < /tmp/mono-patch-5.20.1.34
+nano Makefile
+
+We need to change the 'PORTVERSION=' from 5.10.1.57 to 5.20.1.34 then save and exit.
+
+cd /usr/ports/devel/llvm80
+make -DBATCH install clean
+cd /usr/ports/graphics/libepoxy
+make -DBATCH install clean
+cd /usr/ports/lang/mono
+make -DBATCH install clean
+make -DBATCH deinstall reinstall
+pkg update
+pkg upgrade
+Restart all services running mono
+service sonarr start
